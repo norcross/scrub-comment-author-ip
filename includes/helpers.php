@@ -11,9 +11,6 @@ namespace Norcross\ScrubCommentAuthorIP\Helpers;
 // Set our alias items.
 use Norcross\ScrubCommentAuthorIP as Core;
 
-// And pull in any other namespaces.
-use WP_Error;
-
 /**
  * Set up the IP address to use as a mask in the database.
  *
