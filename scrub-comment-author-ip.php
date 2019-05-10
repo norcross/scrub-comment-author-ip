@@ -33,12 +33,6 @@ define( __NAMESPACE__ . '\BASE', plugin_basename( __FILE__ ) );
 // Plugin Folder URL.
 define( __NAMESPACE__ . '\URL', plugin_dir_url( __FILE__ ) );
 
-// Set our assets URL constant.
-define( __NAMESPACE__ . '\ASSETS_URL', URL . 'assets' );
-
-// Set our includes and template path constants.
-define( __NAMESPACE__ . '\INCLUDES_PATH', __DIR__ . '/includes' );
-
 // Set the prefix for our actions and filters.
 define( __NAMESPACE__ . '\HOOK_PREFIX', 'scrub_comment_author_ip_' );
 
