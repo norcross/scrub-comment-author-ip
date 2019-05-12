@@ -9,6 +9,7 @@
 namespace Norcross\ScrubCommentAuthorIP;
 
 // Set our alias items.
+use Norcross\ScrubCommentAuthorIP as Core;
 use Norcross\ScrubCommentAuthorIP\Helpers as Helpers;
 use Norcross\ScrubCommentAuthorIP\Database as Database;
 
@@ -85,6 +86,69 @@ class ScrubCLICommands extends WP_CLI_Command {
 
 		// Show the result and bail.
 		WP_CLI::success( sprintf( _n( '%d comment author IP has been updated.', '%d comment author IPs have been updated.', absint( $run_count ), 'scrub-comment-author-ip' ), absint( $run_count ) ) );
+		WP_CLI::halt( 0 );
+	}
+
+	/**
+	 * Enable the plugin setting.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp scrub-cli enable
+	 *
+	 * @when after_wp_load
+	 */
+	function enable() {
+
+		// Set our option key.
+		update_option( Core\OPTION_KEY, 'yes' );
+
+		// Show the result and bail.
+		WP_CLI::success( __( 'The plugin setting has been enabled.', 'scrub-comment-author-ip' ) );
+		WP_CLI::halt( 0 );
+	}
+
+	/**
+	 * Disable (or delete) the plugin setting.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--purge]
+	 * : Whether to set the product as active or not.
+	 * ---
+	 * default: false
+	 * options:
+	 *   - true
+	 *   - false
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp scrub-cli disable
+	 *
+	 * @when after_wp_load
+	 */
+	function disable( $args, $assoc_args ) {
+
+		// Parse out the associatives.
+		$parsed = wp_parse_args( $assoc_args, array( 'purge' => false ) );
+
+		// Set our option key if we set to false, otherwise delete it.
+		if ( false !== $parsed['purge'] ) {
+
+			// First delete the key.
+			delete_option( Core\OPTION_KEY );
+
+			// The show the result and bail.
+			WP_CLI::success( __( 'The plugin setting has been deleted.', 'scrub-comment-author-ip' ) );
+			WP_CLI::halt( 0 );
+		}
+
+		// Just set it to "no" for this.
+		update_option( Core\OPTION_KEY, 'no' );
+
+		// Show the result and bail.
+		WP_CLI::success( __( 'The plugin setting has been disabled.', 'scrub-comment-author-ip' ) );
 		WP_CLI::halt( 0 );
 	}
 

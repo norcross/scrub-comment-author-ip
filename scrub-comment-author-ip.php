@@ -36,6 +36,9 @@ define( __NAMESPACE__ . '\URL', plugin_dir_url( __FILE__ ) );
 // Set the prefix for our actions and filters.
 define( __NAMESPACE__ . '\HOOK_PREFIX', 'scrub_comment_author_ip_' );
 
+// Set the single option key we store.
+define( __NAMESPACE__ . '\OPTION_KEY', 'comment_ip_scrub_enable' );
+
 // Go and load our files.
 require_once __DIR__ . '/includes/helpers.php';
 require_once __DIR__ . '/includes/settings-api.php';

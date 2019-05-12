@@ -69,6 +69,14 @@ function replace_single_comment_ip( $comment_id = 0 ) {
 		return new WP_Error( 'missing_comment_id', __( 'The comment ID is required. So provide one.', 'scrub-comment-author-ip' ) );
 	}
 
+	// Check for it being enabled first.
+	$maybe_enabled  = Helpers\maybe_scrub_enabled( 'boolean' );
+
+	// Bail if we aren't enabled.
+	if ( false === $maybe_enabled ) {
+		return new WP_Error( 'not_enabled', __( 'The plugin setting has not been enabled.', 'scrub-comment-author-ip' ) );
+	}
+
 	// Call the global class.
 	global $wpdb;
 
@@ -99,6 +107,14 @@ function replace_batch_comment_ips( $comment_ids = array() ) {
 	// Bail if no comment IDs were provided.
 	if ( empty( $comment_ids ) ) {
 		return new WP_Error( 'missing_comment_ids', __( 'Comment IDs is required. So provide one.', 'scrub-comment-author-ip' ) );
+	}
+
+	// Check for it being enabled first.
+	$maybe_enabled  = Helpers\maybe_scrub_enabled( 'boolean' );
+
+	// Bail if we aren't enabled.
+	if ( false === $maybe_enabled ) {
+		return new WP_Error( 'not_enabled', __( 'The plugin setting has not been enabled.', 'scrub-comment-author-ip' ) );
 	}
 
 	// Fetch the masked IP.

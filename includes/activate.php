@@ -19,7 +19,7 @@ use Norcross\ScrubCommentAuthorIP as Core;
 function activate() {
 
 	// Set our initial option.
-	update_option( 'ip_scrub_enable', 'yes', 'no' );
+	update_option( Core\OPTION_KEY, 'yes' );
 
 	// Include our action so that we may add to this later.
 	do_action( Core\HOOK_PREFIX . 'activate_process' );

@@ -19,7 +19,7 @@ use Norcross\ScrubCommentAuthorIP as Core;
 function uninstall() {
 
 	// Delete the option.
-	delete_option( 'ip_scrub_enable' );
+	delete_option( Core\OPTION_KEY );
 
 	// Include our action so that we may add to this later.
 	do_action( Core\HOOK_PREFIX . 'uninstall_process' );

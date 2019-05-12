@@ -11,6 +11,48 @@ namespace Norcross\ScrubCommentAuthorIP\Helpers;
 // Set our alias items.
 use Norcross\ScrubCommentAuthorIP as Core;
 
+// And pull in any other namespaces.
+use WP_Error;
+
+/**
+ * Check the setting to see if we have enabled it.
+ *
+ * @param  string $return_type  How to return the option. Accepts "boolean" or "string".
+ *
+ * @return mixed
+ */
+function maybe_scrub_enabled( $return_type = 'string' ) {
+
+	// First get the option key itself.
+	$set_option = get_option( Core\OPTION_KEY, 'no' );
+
+	// Switch through our return types.
+	switch ( esc_attr( $return_type ) ) {
+
+		// Handle the boolean return.
+		case 'bool' :
+		case 'boolean' :
+
+			// Check for the stored "yes" to return.
+			return ! empty( $set_option ) && 'yes' === sanitize_text_field( $set_option ) ? true : false;
+
+			// And break.
+			break;
+
+		// Handle my yes / no string return.
+		case 'string' :
+
+			// Check for the stored "yes" to return.
+			return ! empty( $set_option ) && 'yes' === sanitize_text_field( $set_option ) ? 'yes' : 'no';
+
+			// And break.
+			break;
+	}
+
+	// Return an error set because they done messed up.
+	return new WP_Error( 'invalid_return_type', __( 'You requested an invalid return type.', 'scrub-comment-author-ip' ) );
+}
+
 /**
  * Set up the IP address to use as a mask in the database.
  *
