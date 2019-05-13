@@ -54,6 +54,14 @@ class ScrubCLICommands extends WP_CLI_Command {
 	 */
 	function cleanup() {
 
+		// Check for it being enabled first.
+		$is_enabled = Helpers\maybe_scrub_enabled( 'boolean' );
+
+		// Bail if we aren't enabled.
+		if ( false === $is_enabled ) {
+			WP_CLI::error( __( 'The plugin setting has not been enabled.', 'scrub-comment-author-ip' ) );
+		}
+
 		// First attempt to get the IDs.
 		$update_ids = Database\get_ids_for_update();
 
@@ -109,18 +117,7 @@ class ScrubCLICommands extends WP_CLI_Command {
 	}
 
 	/**
-	 * Disable (or delete) the plugin setting.
-	 *
-	 * ## OPTIONS
-	 *
-	 * [--purge]
-	 * : Whether to set the product as active or not.
-	 * ---
-	 * default: false
-	 * options:
-	 *   - true
-	 *   - false
-	 * ---
+	 * Set the option to "no" in the database.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -128,21 +125,7 @@ class ScrubCLICommands extends WP_CLI_Command {
 	 *
 	 * @when after_wp_load
 	 */
-	function disable( $args, $assoc_args ) {
-
-		// Parse out the associatives.
-		$parsed = wp_parse_args( $assoc_args, array( 'purge' => false ) );
-
-		// Set our option key if we set to false, otherwise delete it.
-		if ( false !== $parsed['purge'] ) {
-
-			// First delete the key.
-			delete_option( Core\OPTION_KEY );
-
-			// The show the result and bail.
-			WP_CLI::success( __( 'The plugin setting has been deleted.', 'scrub-comment-author-ip' ) );
-			WP_CLI::halt( 0 );
-		}
+	function disable() {
 
 		// Just set it to "no" for this.
 		update_option( Core\OPTION_KEY, 'no' );
@@ -150,6 +133,43 @@ class ScrubCLICommands extends WP_CLI_Command {
 		// Show the result and bail.
 		WP_CLI::success( __( 'The plugin setting has been disabled.', 'scrub-comment-author-ip' ) );
 		WP_CLI::halt( 0 );
+	}
+
+	/**
+	 * Delete the key in the database.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp scrub-cli delete
+	 *
+	 * @when after_wp_load
+	 */
+	function delete() {
+
+		// First delete the key.
+		delete_option( Core\OPTION_KEY );
+
+		// The show the result and bail.
+		WP_CLI::success( __( 'The plugin setting has been deleted.', 'scrub-comment-author-ip' ) );
+		WP_CLI::halt( 0 );
+	}
+
+	/**
+	 * Provides the status of the plugin.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp scrub-cli status
+	 *
+	 * @when after_wp_load
+	 */
+	function status() {
+
+		// Check for it being enabled first.
+		$maybe_enabled  = Helpers\maybe_scrub_enabled( 'boolean' );
+
+		// Return the message.
+		WP_CLI::success( false !== $maybe_enabled ? __( 'The plugin is enabled', 'scrub-comment-author-ip' ) : __( 'The plugin is disabled', 'scrub-comment-author-ip' ) );
 	}
 
 	/**
