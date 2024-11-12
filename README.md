@@ -8,6 +8,12 @@ Scrub Comment Author IP
 
 Make sure no real IP addresses are stored in WP comments.
 
+### Features
+
+* a CLI command to bulk convert existing comment IP addresses to the masked
+* auto-filtering of new comments to use masked IP.
+
 ### To Do
-* this readme file, clearly.
-* add a CLI command to update in batch?
+
+* add admin UI piece to bulk convert existing comments
+* add whitelisting of IPs
