@@ -23,27 +23,6 @@ use WP_CLI_Command;
 class ScrubCLICommands extends WP_CLI_Command {
 
 	/**
-	 * Get the array of arguments for the runcommand function.
-	 *
-	 * @param  array $custom  Any custom args to pass.
-	 *
-	 * @return array
-	 */
-	protected function get_command_args( $custom = array() ) {
-
-		// Set my base args.
-		$args   = array(
-			'return'     => true,   // Return 'STDOUT'; use 'all' for full object.
-			'parse'      => 'json', // Parse captured STDOUT to JSON array.
-			'launch'     => false,  // Reuse the current process.
-			'exit_error' => false,   // Halt script execution on error.
-		);
-
-		// Return either the base args, or the merged item.
-		return ! empty( $custom ) ? wp_parse_args( $args, $custom ) : $args;
-	}
-
-	/**
 	 * Swap out any existing IP data with our default.
 	 *
 	 * ## EXAMPLES
@@ -135,7 +114,7 @@ class ScrubCLICommands extends WP_CLI_Command {
 	function enable() {
 
 		// Set our option key.
-		update_option( Core\OPTION_KEY, 'yes' );
+		update_option( Core\OPTION_KEY, 'yes', false );
 
 		// Show the result and bail.
 		WP_CLI::success( __( 'The plugin setting has been enabled.', 'scrub-comment-author-ip' ) );
@@ -154,7 +133,7 @@ class ScrubCLICommands extends WP_CLI_Command {
 	function disable() {
 
 		// Just set it to "no" for this.
-		update_option( Core\OPTION_KEY, 'no' );
+		update_option( Core\OPTION_KEY, 'no', false );
 
 		// Show the result and bail.
 		WP_CLI::success( __( 'The plugin setting has been disabled.', 'scrub-comment-author-ip' ) );

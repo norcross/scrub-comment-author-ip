@@ -4,10 +4,10 @@
  * Plugin URI:      https://github.com/norcross/scrub-comment-author-ip
  * Description:     Make sure no real IP addresses are stored in WP comments.
  * Author:          Andrew Norcross
- * Author URI:      http://andrewnorcross.com
+ * Author URI:      https://andrewnorcross.com
  * Text Domain:     scrub-comment-author-ip
  * Domain Path:     /languages
- * Version:         0.0.1
+ * Version:         1.0.0
  *
  * @package         ScrubCommentAuthorIP
  */
@@ -22,7 +22,7 @@ use WP_CLI;
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define our version.
-define( __NAMESPACE__ . '\VERS', '0.0.1' );
+define( __NAMESPACE__ . '\VERS', '1.0.0' );
 
 // Plugin root file.
 define( __NAMESPACE__ . '\FILE', __FILE__ );
