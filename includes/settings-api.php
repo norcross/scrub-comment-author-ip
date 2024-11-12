@@ -49,7 +49,7 @@ function display_field() {
 	echo '<label for="ip-scrub-enable-checkbox">';
 
 		// Echo out the input name itself.
-		echo '<input name="' . Core\OPTION_KEY . '" type="checkbox" id="ip-scrub-enable-checkbox" value="yes" ' . checked( 'yes', Helpers\maybe_scrub_enabled() ) . ' />';
+		echo '<input name="' . Core\OPTION_KEY . '" type="checkbox" id="ip-scrub-enable-checkbox" value="yes" ' . checked( 'yes', Helpers\maybe_scrub_enabled(), false ) . ' />';
 
 		// Echo out the text we just set above.
 		echo wp_kses_post( $set_label );

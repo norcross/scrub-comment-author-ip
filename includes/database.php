@@ -59,10 +59,11 @@ function get_ids_for_update() {
  * Replace a single comment IP address in the database directly.
  *
  * @param  integer $comment_id  The ID of the comment being updated.
+ * @param  string  $masked_ip   The new masked IP we wanna use.
  *
  * @return mixed
  */
-function replace_single_comment_ip( $comment_id = 0 ) {
+function replace_single_comment_ip( $comment_id = 0, $masked_ip = '' ) {
 
 	// Bail if no comment ID was provided.
 	if ( empty( $comment_id ) ) {
@@ -77,6 +78,9 @@ function replace_single_comment_ip( $comment_id = 0 ) {
 		return new WP_Error( 'not_enabled', __( 'The plugin setting has not been enabled.', 'scrub-comment-author-ip' ) );
 	}
 
+	// Define our masked IP.
+	$set_new_ip = ! empty( $masked_ip ) ? $masked_ip : Helpers\fetch_masked_ip();
+
 	// Call the global class.
 	global $wpdb;
 
@@ -84,15 +88,21 @@ function replace_single_comment_ip( $comment_id = 0 ) {
 	$table_name = $wpdb->prefix . 'comments';
 
 	// Run the actual DB update.
-	$update_row = $wpdb->update( $table_name,
-		array( 'comment_author_IP' => Helpers\fetch_masked_ip() ),
-		array( 'ID' => absint( $comment_id ) ),
-		array( '%s' ),
-		array( '%d' )
+	$update_row = $wpdb->update(
+		$table_name,
+		[ 'comment_author_IP' => $set_new_ip ],
+		[ 'comment_ID' => absint( $comment_id ) ],
+		[ '%s' ],
+		[ '%d' ],
 	);
 
+	// Return the error if we got one.
+	if ( ! empty( $wpdb->last_error ) ) {
+		return new WP_Error( 'update_row_failure', $wpdb->last_error );
+	}
+
 	// Return the boolean if it was updated or not.
-	return false !== $update_row ? true : new WP_Error( 'update_row_failure', __( 'The database update failed.', 'scrub-comment-author-ip' ) );;
+	return false !== $update_row ? true : new WP_Error( 'update_row_failure', __( 'The database update failed.', 'scrub-comment-author-ip' ) );
 }
 
 /**
@@ -130,11 +140,12 @@ function replace_batch_comment_ips( $comment_ids = array() ) {
 	foreach ( $comment_ids as $comment_id ) {
 
 		// Run the actual DB update.
-		$update_row = $wpdb->update( $table_name,
-			array( 'comment_author_IP' => $masked_ip ),
-			array( 'ID' => absint( $comment_id ) ),
-			array( '%s' ),
-			array( '%d' )
+		$update_row = $wpdb->update(
+			$table_name,
+			[ 'comment_author_IP' => $masked_ip ],
+			[ 'comment_ID' => absint( $comment_id ) ],
+			[ '%s' ],
+			[ '%d' ],
 		);
 
 		// Throw an error if it didn't work.

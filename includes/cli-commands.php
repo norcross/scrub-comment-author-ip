@@ -79,18 +79,44 @@ class ScrubCLICommands extends WP_CLI_Command {
 		// Set up the progress bar.
 		$set_ticker = \WP_CLI\Utils\make_progress_bar( __( 'Beginning comment IP cleanup...', 'scrub-comment-author-ip' ), $run_count );
 
+		// Set a flag for possible errors.
+		$maybe_err  = false;
+
+		// Set an empty fix.
+		$fix_count  = 0;
+
 		// Now loop my comment IDs and change the IP.
 		foreach ( $update_ids as $update_id ) {
 
-			// Set my new term.
-			WP_CLI::runcommand( 'comment update ' . absint( $update_id ) . ' --comment_author_IP="'.  $masked_ip . '" --quiet=true', $this->get_command_args() );
-
 			// Add to the progress bar status.
 			$set_ticker->tick();
+
+			// Try to scrub it it.
+			$scrub_comment  = Database\replace_single_comment_ip( $update_id, $masked_ip );
+
+			// Flag if it failed.
+			if ( empty( $scrub_comment ) || is_wp_error( $scrub_comment ) ) {
+
+				// Set the flag.
+				$maybe_err  = true;
+
+				// And go to the rest.
+				continue;
+			}
+
+			// Update the fix count.
+			$fix_count++;
 		}
 
 		// And done.
 		$set_ticker->finish();
+
+		// If we wrote an error, say so.
+		if ( false !== $maybe_err ) {
+
+			// Display an error message in red.
+			WP_CLI::line( WP_CLI::colorize( '%r' . __( 'One or more of the comments did not update correctly.', 'scrub-comment-author-ip' ) . '%n' ), $assoc_args );
+		}
 
 		// Show the result and bail.
 		WP_CLI::success( sprintf( _n( '%d comment author IP has been updated.', '%d comment author IPs have been updated.', absint( $run_count ), 'scrub-comment-author-ip' ), absint( $run_count ) ) );
