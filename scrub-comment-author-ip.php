@@ -43,6 +43,7 @@ define( __NAMESPACE__ . '\OPTION_KEY', 'comment_ip_scrub_enable' );
 require_once __DIR__ . '/includes/helpers.php';
 require_once __DIR__ . '/includes/settings-api.php';
 require_once __DIR__ . '/includes/database.php';
+require_once __DIR__ . '/includes/bulk-process.php';
 require_once __DIR__ . '/includes/comment-process.php';
 
 // Check that we have the CLI constant available.

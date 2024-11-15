@@ -74,8 +74,13 @@ function load_comment_settings() {
 	// Load the actual checkbox field itself.
 	add_settings_field( 'ip-scrub-enable', __( 'Scrub Comment IPs', 'scrub-comment-author-ip' ), __NAMESPACE__ . '\display_field', 'discussion',  'default', [ 'class' => 'ip-scrub-enable-wrapper' ] );
 
+	// Get the amount we could fix.
+	$get_bulk_nums  = Database\get_count_for_update();
+
 	// Load the button for the bulk action.
-	add_settings_field( 'ip-scrub-bulk-action', '', __NAMESPACE__ . '\bulk_action_field', 'discussion',  'default', [ 'class' => 'ip-scrub-bulk-action-wrapper' ] );
+	if ( ! empty( $get_bulk_nums ) ) {
+		add_settings_field( 'ip-scrub-bulk-action', '', __NAMESPACE__ . '\bulk_action_field', 'discussion',  'default', [ 'class' => 'ip-scrub-bulk-action-wrapper', 'counts' => $get_bulk_nums ] );
+	}
 }
 
 /**
@@ -109,22 +114,25 @@ function display_field() {
  *
  * @return HTML
  */
-function bulk_action_field() {
+function bulk_action_field( $args ) {
 
 	// Set the bulk args up.
 	$set_bulk_args  = [
 		'ip-scrub-run-bulk' => 'yes',
-		'ip-scrub-nonce'    => wp_create_nonce( 'scrub_bulk' ),
+		'ip-scrub-nonce'    => wp_create_nonce( 'ip_scrub_bulk' ),
 	];
 
 	// Set up the link for runniing the bulk update.
-	$set_bulk_link  = add_query_arg( $set_bulk_args, admin_url( 'options-discussion.php' ) );
+	$set_bulk_link  = Helpers\fetch_settings_url( $set_bulk_args );
 
 	// And show the button link.
 	echo '<a class="button button-secondary ip-scrub-bulk-admin-button" href="' . esc_url( $set_bulk_link ) . '">' . __( 'Bulk Cleanup', 'scrub-comment-author-ip' ) . '</a>';
 
-	// And add some text explaining what this is.
-	echo '<p class="description ip-scrub-bulk-button-explain">' . esc_html__( 'For sites with a large amount of comments, it is suggested to use the WP-CLI command included with this plugin.', 'scrub-comment-author-ip' ) . '</p>';
+	// If we have a lot of comments, show the CLI message.
+	// @todo decide on a large number.
+	if ( ! empty( $args['counts'] ) && 200 < absint( $args['counts'] ) ) {
+		echo '<p class="description ip-scrub-bulk-button-explain">' . esc_html__( 'For sites with a large amount of comments, it is suggested to use the WP-CLI command included with this plugin.', 'scrub-comment-author-ip' ) . '</p>';
+	}
 }
 
 /**

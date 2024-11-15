@@ -16,6 +16,41 @@ use Norcross\ScrubCommentAuthorIP\Helpers as Helpers;
 use WP_Error;
 
 /**
+ * Just get a simple count.
+ *
+ * @return array
+ */
+function get_count_for_update() {
+
+	// Fetch the masked IP.
+	$masked_ip  = Helpers\fetch_masked_ip();
+
+	// Call the global class.
+	global $wpdb;
+
+	// Set my table name.
+	$table_name = $wpdb->prefix . 'comments';
+
+	// Set up our query.
+	$query_args = $wpdb->prepare("
+		SELECT   COUNT(*)
+		FROM     $table_name
+		WHERE    comment_author_IP NOT LIKE '%s'
+	", esc_attr( $masked_ip ) );
+
+	// Process the query.
+	$query_run  = $wpdb->get_var( $query_args );
+
+	// Throw the error if we have one.
+	if ( is_wp_error( $query_run ) ) {
+		return new WP_Error( $query_run->get_error_code(), $query_run->get_error_message() );
+	}
+
+	// Return the count, whatever it may be.
+	return absint( $query_run );
+}
+
+/**
  * Get all my comment IDs.
  *
  * @return array
