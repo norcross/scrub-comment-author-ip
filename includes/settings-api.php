@@ -16,7 +16,42 @@ use Norcross\ScrubCommentAuthorIP\Database as Database;
 /**
  * Start our engines.
  */
+add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\load_settings_field_css' );
 add_action( 'admin_init', __NAMESPACE__ . '\load_comment_settings' );
+
+/**
+ * Include a small bit of CSS for our admin.
+ *
+ * @param  string $hook_suffix  The hook suffix on admin.
+ *
+ * @return void
+ */
+function load_settings_field_css( $hook_suffix ) {
+
+	// Only load this on the comment settings page.
+	if ( empty( $hook_suffix ) || 'options-discussion.php' !== $hook_suffix ) {
+		return;
+	}
+
+	// Set my CSS up.
+	$setup_css  = '
+		tr.ip-scrub-bulk-action-wrapper th,
+		tr.ip-scrub-bulk-action-wrapper td {
+			padding-top: 0;
+		}
+
+		tr.ip-scrub-bulk-action-wrapper a.ip-scrub-bulk-admin-button {
+			margin-bottom: 5px;
+		}
+
+		tr.ip-scrub-bulk-action-wrapper p.ip-scrub-bulk-button-explain {
+			margin-top: 0;
+		}
+	';
+
+	// And add the CSS.
+	wp_add_inline_style( 'common', $setup_css );
+}
 
 /**
  * Add a checkbox to the comment settings for removing IP addresses.
@@ -25,11 +60,22 @@ add_action( 'admin_init', __NAMESPACE__ . '\load_comment_settings' );
  */
 function load_comment_settings() {
 
-	// Add out checkbox with a sanitiation callback.
-	register_setting( 'discussion', Core\OPTION_KEY, __NAMESPACE__ . '\sanitize_scrub_setting' );
+	// Define the args for the setting registration.
+	$setup_args = [
+		'type'              => 'string',
+		'show_in_rest'      => false,
+		'default'           => 'yes',
+		'sanitize_callback' => __NAMESPACE__ . '\sanitize_scrub_setting',
+	];
 
-	// Load the actual field itself.
-	add_settings_field( 'ip-scrub-enable', __( 'Scrub Comment IPs', 'scrub-comment-author-ip' ), __NAMESPACE__ . '\display_field', 'discussion',  'default' );
+	// Add out checkbox with a sanitiation callback.
+	register_setting( 'discussion', Core\OPTION_KEY, $setup_args );
+
+	// Load the actual checkbox field itself.
+	add_settings_field( 'ip-scrub-enable', __( 'Scrub Comment IPs', 'scrub-comment-author-ip' ), __NAMESPACE__ . '\display_field', 'discussion',  'default', [ 'class' => 'ip-scrub-enable-wrapper' ] );
+
+	// Load the button for the bulk action.
+	add_settings_field( 'ip-scrub-bulk-action', '', __NAMESPACE__ . '\bulk_action_field', 'discussion',  'default', [ 'class' => 'ip-scrub-bulk-action-wrapper' ] );
 }
 
 /**
@@ -56,6 +102,29 @@ function display_field() {
 
 	// Close up the label.
 	echo '</label>';
+}
+
+/**
+ * Display a button for the bulk action.
+ *
+ * @return HTML
+ */
+function bulk_action_field() {
+
+	// Set the bulk args up.
+	$set_bulk_args  = [
+		'ip-scrub-run-bulk' => 'yes',
+		'ip-scrub-nonce'    => wp_create_nonce( 'scrub_bulk' ),
+	];
+
+	// Set up the link for runniing the bulk update.
+	$set_bulk_link  = add_query_arg( $set_bulk_args, admin_url( 'options-discussion.php' ) );
+
+	// And show the button link.
+	echo '<a class="button button-secondary ip-scrub-bulk-admin-button" href="' . esc_url( $set_bulk_link ) . '">' . __( 'Bulk Cleanup', 'scrub-comment-author-ip' ) . '</a>';
+
+	// And add some text explaining what this is.
+	echo '<p class="description ip-scrub-bulk-button-explain">' . esc_html__( 'For sites with a large amount of comments, it is suggested to use the WP-CLI command included with this plugin.', 'scrub-comment-author-ip' ) . '</p>';
 }
 
 /**
