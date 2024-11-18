@@ -91,16 +91,16 @@ function load_comment_settings() {
 function display_field() {
 
 	// Set a label with our default IP.
-	$set_label  = sprintf( __( 'Replace the comment author IP address with %s', 'scrub-comment-author-ip' ), '<code>' . esc_attr( Helpers\fetch_masked_ip() ) . '</code>' );
+	$set_label  = sprintf( __( 'Replace the comment author IP address with %s', 'scrub-comment-author-ip' ), '<code>' . esc_html( Helpers\fetch_masked_ip() ) . '</code>' );
 
 	// Add a legend output for screen readers.
-	echo '<legend class="screen-reader-text"><span>' . __( 'Scrub Comment IPs', 'scrub-comment-author-ip' ) . '</span></legend>';
+	echo '<legend class="screen-reader-text"><span>' . esc_html__( 'Scrub Comment IPs', 'scrub-comment-author-ip' ) . '</span></legend>';
 
 	// We are wrapping the entire thing in a label.
 	echo '<label for="ip-scrub-enable-checkbox">';
 
 		// Echo out the input name itself.
-		echo '<input name="' . Core\OPTION_KEY . '" type="checkbox" id="ip-scrub-enable-checkbox" value="yes" ' . checked( 'yes', Helpers\maybe_scrub_enabled(), false ) . ' />';
+		echo '<input name="' . esc_attr( Core\OPTION_KEY ) . '" type="checkbox" id="ip-scrub-enable-checkbox" value="yes" ' . checked( 'yes', Helpers\maybe_scrub_enabled(), false ) . ' />';
 
 		// Echo out the text we just set above.
 		echo wp_kses_post( $set_label );
@@ -126,7 +126,7 @@ function bulk_action_field( $args ) {
 	$set_bulk_link  = Helpers\fetch_settings_url( $set_bulk_args );
 
 	// And show the button link.
-	echo '<a class="button button-secondary ip-scrub-bulk-admin-button" href="' . esc_url( $set_bulk_link ) . '">' . __( 'Bulk Cleanup', 'scrub-comment-author-ip' ) . '</a>';
+	echo '<a class="button button-secondary ip-scrub-bulk-admin-button" href="' . esc_url( $set_bulk_link ) . '">' . esc_html__( 'Bulk Cleanup', 'scrub-comment-author-ip' ) . '</a>';
 
 	// If we have a lot of comments, show the CLI message.
 	// @todo decide on a large number.

@@ -28,18 +28,15 @@ function get_count_for_update() {
 	// Call the global class.
 	global $wpdb;
 
-	// Set my table name.
-	$table_name = $wpdb->prefix . 'comments';
-
 	// Set up our query.
 	$query_args = $wpdb->prepare("
 		SELECT   COUNT(*)
-		FROM     $table_name
+		FROM     $wpdb->comments
 		WHERE    comment_author_IP NOT LIKE '%s'
 	", esc_attr( $masked_ip ) );
 
 	// Process the query.
-	$query_run  = $wpdb->get_var( $query_args );
+	$query_run  = $wpdb->get_var( $query_args ); // phpcs:ignore -- we are skipping the overhead of get_comments.
 
 	// Throw the error if we have one.
 	if ( is_wp_error( $query_run ) ) {
@@ -63,18 +60,15 @@ function get_ids_for_update() {
 	// Call the global class.
 	global $wpdb;
 
-	// Set my table name.
-	$table_name = $wpdb->prefix . 'comments';
-
 	// Set up our query.
 	$query_args = $wpdb->prepare("
 		SELECT   comment_ID
-		FROM     $table_name
+		FROM     $wpdb->comments
 		WHERE    comment_author_IP NOT LIKE '%s'
 	", esc_attr( $masked_ip ) );
 
 	// Process the query.
-	$query_run  = $wpdb->get_col( $query_args );
+	$query_run  = $wpdb->get_col( $query_args ); // phpcs:ignore -- we are skipping the overhead of get_comments.
 
 	// Throw the error if we have one.
 	if ( is_wp_error( $query_run ) ) {
@@ -119,12 +113,9 @@ function replace_single_comment_ip( $comment_id = 0, $masked_ip = '' ) {
 	// Call the global class.
 	global $wpdb;
 
-	// Set my table name.
-	$table_name = $wpdb->prefix . 'comments';
-
 	// Run the actual DB update.
-	$update_row = $wpdb->update(
-		$table_name,
+	$update_row = $wpdb->update( // phpcs:ignore -- we dont want to trigger anything else here.
+		$wpdb->comments,
 		[ 'comment_author_IP' => $set_new_ip ],
 		[ 'comment_ID' => absint( $comment_id ) ],
 		[ '%s' ],
@@ -147,7 +138,7 @@ function replace_single_comment_ip( $comment_id = 0, $masked_ip = '' ) {
  *
  * @return mixed
  */
-function replace_batch_comment_ips( $comment_ids = array() ) {
+function replace_batch_comment_ips( $comment_ids = [] ) {
 
 	// Bail if no comment IDs were provided.
 	if ( empty( $comment_ids ) ) {
@@ -168,15 +159,12 @@ function replace_batch_comment_ips( $comment_ids = array() ) {
 	// Call the global class.
 	global $wpdb;
 
-	// Set my table name.
-	$table_name = $wpdb->prefix . 'comments';
-
 	// Now loop the IDs and run the update.
 	foreach ( $comment_ids as $comment_id ) {
 
 		// Run the actual DB update.
-		$update_row = $wpdb->update(
-			$table_name,
+		$update_row = $wpdb->update( // phpcs:ignore -- we dont want to trigger anything else here.
+			$wpdb->comments,
 			[ 'comment_author_IP' => $masked_ip ],
 			[ 'comment_ID' => absint( $comment_id ) ],
 			[ '%s' ],

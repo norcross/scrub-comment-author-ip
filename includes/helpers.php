@@ -36,7 +36,7 @@ function maybe_scrub_enabled( $return_type = 'string' ) {
 			// Check for the stored "yes" to return.
 			return ! empty( $set_option ) && 'yes' === sanitize_text_field( $set_option ) ? true : false;
 
-			// And break.
+			// Done.
 			break;
 
 		// Handle my yes / no string return.
@@ -45,7 +45,7 @@ function maybe_scrub_enabled( $return_type = 'string' ) {
 			// Check for the stored "yes" to return.
 			return ! empty( $set_option ) && 'yes' === sanitize_text_field( $set_option ) ? 'yes' : 'no';
 
-			// And break.
+			// Done.
 			break;
 	}
 
