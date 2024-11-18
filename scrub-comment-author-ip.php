@@ -7,7 +7,7 @@
  * Author URI:      https://andrewnorcross.com
  * Text Domain:     scrub-comment-author-ip
  * Domain Path:     /languages
- * Version:         1.0.0
+ * Version:         1.1.0
  *
  * @package         ScrubCommentAuthorIP
  */
@@ -22,7 +22,7 @@ use WP_CLI;
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define our version.
-define( __NAMESPACE__ . '\VERS', '1.0.0' );
+define( __NAMESPACE__ . '\VERS', '1.1.0' );
 
 // Plugin root file.
 define( __NAMESPACE__ . '\FILE', __FILE__ );
@@ -43,6 +43,7 @@ define( __NAMESPACE__ . '\OPTION_KEY', 'comment_ip_scrub_enable' );
 require_once __DIR__ . '/includes/helpers.php';
 require_once __DIR__ . '/includes/settings-api.php';
 require_once __DIR__ . '/includes/database.php';
+require_once __DIR__ . '/includes/bulk-process.php';
 require_once __DIR__ . '/includes/comment-process.php';
 
 // Check that we have the CLI constant available.

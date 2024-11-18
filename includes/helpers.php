@@ -36,7 +36,7 @@ function maybe_scrub_enabled( $return_type = 'string' ) {
 			// Check for the stored "yes" to return.
 			return ! empty( $set_option ) && 'yes' === sanitize_text_field( $set_option ) ? true : false;
 
-			// And break.
+			// Done.
 			break;
 
 		// Handle my yes / no string return.
@@ -45,7 +45,7 @@ function maybe_scrub_enabled( $return_type = 'string' ) {
 			// Check for the stored "yes" to return.
 			return ! empty( $set_option ) && 'yes' === sanitize_text_field( $set_option ) ? 'yes' : 'no';
 
-			// And break.
+			// Done.
 			break;
 	}
 
@@ -65,4 +65,22 @@ function fetch_masked_ip() {
 
 	// Confirm it's a valid IP before returning it.
 	return ! empty( $masked_ip ) && filter_var( $masked_ip, FILTER_VALIDATE_IP ) ? $masked_ip : '127.0.0.1';
+}
+
+/**
+ * Get the URL for our settings page with any custom args.
+ *
+ * @param  array  $args  The possible array of args.
+ *
+ * @return string
+ */
+function fetch_settings_url( $args = [] ) {
+
+	// If we have no args, just do the basic link.
+	if ( empty( $args ) ) {
+		return admin_url( 'options-discussion.php' );
+	}
+
+	// Now return it in args.
+	return add_query_arg( $args, admin_url( 'options-discussion.php' ) );
 }
