@@ -29,6 +29,8 @@ class ScrubCLICommands extends WP_CLI_Command {
 	 *
 	 *     wp scrub-cli cleanup
 	 *
+	 * @alias cleanup
+	 *
 	 * @when after_wp_load
 	 */
 	function cleanup() {
@@ -109,6 +111,8 @@ class ScrubCLICommands extends WP_CLI_Command {
 	 *
 	 *     wp scrub-cli enable
 	 *
+	 * @alias enable
+	 *
 	 * @when after_wp_load
 	 */
 	function enable() {
@@ -127,6 +131,8 @@ class ScrubCLICommands extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     wp scrub-cli disable
+	 *
+	 * @alias disable
 	 *
 	 * @when after_wp_load
 	 */
@@ -147,6 +153,8 @@ class ScrubCLICommands extends WP_CLI_Command {
 	 *
 	 *     wp scrub-cli delete
 	 *
+	 * @alias delete
+	 *
 	 * @when after_wp_load
 	 */
 	function delete() {
@@ -166,6 +174,8 @@ class ScrubCLICommands extends WP_CLI_Command {
 	 *
 	 *     wp scrub-cli status
 	 *
+	 * @alias status
+	 *
 	 * @when after_wp_load
 	 */
 	function status() {
@@ -175,19 +185,6 @@ class ScrubCLICommands extends WP_CLI_Command {
 
 		// Return the message.
 		WP_CLI::success( false !== $maybe_enabled ? __( 'The plugin is enabled', 'scrub-comment-author-ip' ) : __( 'The plugin is disabled', 'scrub-comment-author-ip' ) );
-	}
-
-	/**
-	 * This is a placeholder function for testing.
-	 *
-	 * ## EXAMPLES
-	 *
-	 *     wp scrub-cli runtests
-	 *
-	 * @when after_wp_load
-	 */
-	function runtests() {
-		// This is blank, just here when I need it.
 	}
 
 	// End all custom CLI commands.
